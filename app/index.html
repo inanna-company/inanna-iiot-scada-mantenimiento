@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#14191f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" type="image/jpeg" href="../isotipo.jpg" />
+  <link rel="apple-touch-icon" href="../isotipo.jpg" />
+  <link rel="manifest" href="manifest.json" />
+  <title>INANNA COMPANY | App Monitor IIoT - Bomba | SCADA & Lazo 4-20 mA</title>
+  <style>
+    :root {
+      --bg-body: #0a0e13;
+      --bg-main: #14191f;
+      --bg-card: #182026;
+      --border-card: #28343e;
+      --cyan: #00b8e6;
+      --blue-title: #1890ff;
+      --text-label: #9aa8b6;
+      --text-muted: #5b6977;
+      --green-bg: #1e6b27;
+      --green-text: #a5d6a7;
+      --yellow-bg: #85581A;
+      --yellow-text: #ffe082;
+      --red-bg: #8b1e24;
+      --red-text: #ef9a9a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 12px 12px 86px;
+    }
+
+    /* Marco de la App Móvil / Industrial */
+    .phone-shell {
+      width: 100%;
+      max-width: 440px;
+      background-color: var(--bg-main);
+      border: 1px solid #25303b;
+      border-radius: 20px;
+      padding: 18px 16px 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+      position: relative;
+    }
+
+    /* Cabecera compacta de estado de conexión y selector de activo */
+    .app-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.74rem;
+      color: var(--text-label);
+    }
+
+    .conn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      background: rgba(0, 184, 230, 0.12);
+      border: 1px solid rgba(0, 184, 230, 0.35);
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+
+    .dot-live {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: blinkDot 1s infinite alternate;
+    }
+
+    @keyframes blinkDot {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .asset-selector {
+      background: #182026;
+      color: #cfe2f3;
+      border: 1px solid #2b3947;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+
+    /* Título Exacto a la Captura */
+    .app-title {
+      text-align: center;
+      color: var(--blue-title);
+      font-size: 2.15rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 14px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #293440;
+      margin-bottom: 18px;
+    }
+
+    /* Banner de Estado */
+    .status-banner {
+      width: 100%;
+      padding: 15px 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.14rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      transition: all 0.25s ease;
+    }
+
+    .status-normal { background-color: var(--green-bg); color: var(--green-text); }
+    .status-warning { background-color: var(--yellow-bg); color: var(--yellow-text); }
+    .status-danger {
+      background-color: var(--red-bg);
+      color: var(--red-text);
+      animation: pulseDanger 1s infinite alternate;
+    }
+    .status-off { background-color: #2b343d; color: #9aa8b6; }
+
+    @keyframes pulseDanger {
+      from { box-shadow: 0 0 0px rgba(239, 83, 80, 0.2); }
+      to { box-shadow: 0 0 22px rgba(239, 83, 80, 0.75); }
+    }
+
+    /* Grilla 2x2 de Tarjetas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 18px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 116px;
+    }
+
+    .metric-label {
+      color: var(--text-label);
+      font-size: 0.86rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      color: var(--cyan);
+      font-size: 1.95rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    /* Tarjeta del Gráfico en Tiempo Real */
+    .chart-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 16px 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .chart-title {
+      text-align: center;
+      color: var(--text-label);
+      font-size: 0.83rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 195px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Botonera Rápida de Simulación en la Vista Principal */
+    .quick-sim-strip {
+      background: #11171d;
+      border: 1px solid #232f3b;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .quick-sim-title {
+      font-size: 0.7rem;
+      color: #7e8c9b;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 7px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .quick-sim-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .qsim-btn {
+      background: #18212a;
+      color: #b8c7d6;
+      border: 1px solid #2a3846;
+      border-radius: 6px;
+      padding: 6px 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .qsim-btn.active {
+      border-color: var(--cyan);
+      background: rgba(0, 184, 230, 0.18);
+      color: #fff;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    /* Secciones Internas de las otras Pestañas de la App */
+    .section-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-label);
+      margin-bottom: 10px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Slider interactivo Lazo 4-20 mA */
+    .loop-slider-wrap {
+      margin: 12px 0;
+      padding: 10px;
+      background: #12181f;
+      border-radius: 8px;
+      border: 1px solid #243240;
+    }
+
+    .loop-slider {
+      width: 100%;
+      accent-color: var(--cyan);
+      cursor: pointer;
+      margin: 8px 0;
+    }
+
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .loop-stat {
+      background: #11181f;
+      border: 1px solid #243240;
+      border-radius: 7px;
+      padding: 9px 6px;
+      text-align: center;
+    }
+
+    .loop-stat-label {
+      font-size: 0.66rem;
+      color: #8a99a8;
+      margin-bottom: 4px;
+    }
+
+    .loop-stat-val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: monospace;
+    }
+
+    .live-zero-pill {
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    .lz-ok { background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .lz-fault { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #ef4444; }
+
+    /* Tabla Modbus */
+    .modbus-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+    }
+
+    .modbus-table th, .modbus-table td {
+      padding: 6px 6px;
+      text-align: left;
+      border-bottom: 1px solid #222d38;
+    }
+
+    .modbus-table th { color: #7e8c9b; }
+
+    .reg-badge {
+      font-family: monospace;
+      background: #10171e;
+      color: #38bdf8;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #233446;
+    }
+
+    .reg-raw {
+      font-family: monospace;
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    /* Formularios en Pestaña Ajustes */
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.74rem;
+      color: #9aa8b6;
+      margin-bottom: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: #0e141a;
+      border: 1px solid #2b3947;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+    }
+
+    .btn-full {
+      width: 100%;
+      background: var(--cyan);
+      color: #081018;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .btn-danger-full {
+      background: #b91c1c;
+      color: #fff;
+    }
+
+    /* BARRA DE NAVEGACIÓN INFERIOR TIPO APP NATIVA */
+    .bottom-nav {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 440px;
+      background: rgba(20, 27, 34, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid #2c3b4a;
+      border-radius: 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      z-index: 999;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: #7e8c9b;
+      padding: 7px 4px;
+      border-radius: 11px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .nav-item .icon {
+      font-size: 1.15rem;
+    }
+
+    .nav-item.active {
+      background: rgba(0, 184, 230, 0.16);
+      color: var(--cyan);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- CONTENEDOR DE LA APP -->
+  <div class="phone-shell">
+
+    <!-- Barra Superior de Estado con Isotipo Oficial INANNA COMPANY -->
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <img src="../isotipo.jpg" alt="INANNA" style="width:28px; height:28px; border-radius:6px; border:1px solid #2b3d4f;" />
+        <div class="conn-pill">
+          <span class="dot-live"></span>
+          <span id="connStatusText">INANNA IIoT</span>
+        </div>
+      </div>
+
+      <select class="asset-selector" id="assetSelect" onchange="changeAsset(this.value)">
+        <option value="Bomba|1">Bomba (ID 01)</option>
+        <option value="Compresor|2">Compresor (ID 02)</option>
+        <option value="Torre Enfr.|3">Torre Enfr. (ID 03)</option>
+      </select>
+    </div>
+
+    <!-- Título Principal (Idéntico a la captura) -->
+    <h1 class="app-title" id="deviceName">Bomba</h1>
+    <div class="divider"></div>
+
+    <!-- ================================================================== -->
+    <!-- PESTAÑA 1: MONITOR PRINCIPAL (IDÉNTICO A LA CAPTURA DE INSTAGRAM)  -->
+    <!-- ================================================================== -->
+    <div id="view-monitor">
+      <div id="statusBanner" class="status-banner status-normal">
+        ESTADO: OPERACIÓN NORMAL
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">CONSUMO</div>
+          <div class="metric-value" id="valCurrent">0.49 A</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">VIBRACIÓN</div>
+          <div class="metric-value" id="valVibration">0.00 Gs</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">HORAS USO</div>
+          <div class="metric-value" id="valHoursUsed">0.48 hrs</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">HORAS REST.</div>
+          <div class="metric-value" id="valHoursRem">98999.52<br>hrs</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">VIBRACIÓN EN TIEMPO REAL (ÚLTIMOS 30 SEG)</div>
+        <div class="chart-wrapper">
+          <canvas id="vibrationChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Selector Rápido de Escenarios para Probar en Vivo -->
+      <div class="quick-sim-strip">
+        <div class="quick-sim-title">
+          <span>🧪 Simulador de Condición en Planta</span>
+          <span id="quickLoopLabel" style="color:#00b8e6;">Lazo: 12.00 mA (50%)</span>
+        </div>
+        <div class="quick-sim-grid">
+          <button class="qsim-btn active" id="qbtn-normal" onclick="setSimScenario('normal')">🟢 Normal</button>
+          <button class="qsim-btn" id="qbtn-cavitation" onclick="setSimScenario('cavitation')">🟡 Rodamiento</button>
+          <button class="qsim-btn" id="qbtn-overload" onclick="setSimScenario('overload')">🔴 Sobrecarga</button>
+          <button class="qsim-btn" id="qbtn-wirebreak" onclick="setSimScenario('wirebreak')">✂️ 0mA Corte</button>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Actualizado automáticamente cada 1 seg
+      </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- PESTAÑA 2: LAZO DE CORRIENTE 4-20 mA & MAPA MODBUS TCP/RTU         -->
+    <!-- ================================================================== -->
+    <div id="view-scada" class="hidden">
+      <div class="section-box">
+        <div class="section-title">
+          <span>⚡ Lazo Industrial 4–20 mA</span>
+          <span id="liveZeroBadge" class="live-zero-pill lz-ok">CERO VIVO OK</span>
+        </div>
+
+        <div class="loop-grid">
+          <div class="loop-stat">
+            <div class="loop-stat-label">SEÑAL LAZO</div>
+            <div class="loop-stat-val" id="valLoopmA">12.00 mA</div>
+          </div>
+          <div class="loop-stat">
+            <div class="loop-stat-label">ESCALA 0-100%</div>
+            <div class="loop-stat-val" id="valLoopPct">50.0 %</div>
+          </div>
+          <div class="loop-stat">
+            <div class="loop-stat-label">PRESIÓN (BAR)</div>
+            <div class="loop-stat-val" id="valLoopBar">5.00 Bar</div>
+          </div>
+        </div>
+
+        <!-- Calibrador / Inyector Manual de Corriente 4-20 mA -->
+        <div class="loop-slider-wrap">
+          <div style="display:flex; justify-content:space-between; font-size:0.73rem; color:#cbd5e1;">
+            <span>🎛️ Inyector Manual de Lazo (0 a 21 mA):</span>
+            <span id="manualLoopState" style="color:#38bdf8; font-weight:700;">Automático</span>
+          </div>
+          <input type="range" min="0" max="21" step="0.1" value="12.0" class="loop-slider" id="loopSlider" oninput="onManualLoopSlide(this.value)" />
+          <div style="display:flex; justify-content:space-between; font-size:0.68rem; color:#7e8c9b;">
+            <span>0 mA (Cable Cortado)</span>
+            <span>4 mA (0%)</span>
+            <span>12 mA (50%)</span>
+            <span>20 mA (100%)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Registros Modbus TCP (502) y RS485 RTU -->
+      <div class="section-box" style="margin-bottom:0;">
+        <div class="section-title">
+          <span>🗺️ Registros Modbus (TCP 502 & RS485)</span>
+          <span style="color:#00b8e6;">FC 03 / 06</span>
+        </div>
+        <table class="modbus-table">
+          <thead>
+            <tr>
+              <th>Reg</th>
+              <th>Variable</th>
+              <th>Raw 16b</th>
+              <th>Ingeniería</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="reg-badge">40001</span></td>
+              <td>Consumo Motor</td>
+              <td class="reg-raw" id="reg40001">49</td>
+              <td id="eng40001">0.49 A</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40002</span></td>
+              <td>Vibración MEMS</td>
+              <td class="reg-raw" id="reg40002">0</td>
+              <td id="eng40002">0.00 Gs</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40003-4</span></td>
+              <td>Horómetro Flash</td>
+              <td class="reg-raw" id="reg40003">0:48</td>
+              <td id="eng40003">0.48 hrs</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40005</span></td>
+              <td>Estado / Alarma</td>
+              <td class="reg-raw" id="reg40005">1</td>
+              <td id="eng40005">1 = NORMAL</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40008</span></td>
+              <td>Corriente Lazo</td>
+              <td class="reg-raw" id="reg40008">1200</td>
+              <td id="eng40008">12.00 mA</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40009</span></td>
+              <td>Escala Lazo (%)</td>
+              <td class="reg-raw" id="reg40009">5000</td>
+              <td id="eng40009">50.0 %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- PESTAÑA 3: ALARMAS, REPORTES CSV Y TELEGRAM                        -->
+    <!-- ================================================================== -->
+    <div id="view-alarms" class="hidden">
+      <div class="section-box">
+        <div class="section-title">
+          <span>📋 Historial de Eventos & Alarmas SCADA</span>
+          <span style="color:#38bdf8; cursor:pointer;" onclick="clearAlarms()">Limpiar</span>
+        </div>
+        <div id="alarmList" style="max-height:160px; overflow-y:auto; font-family:monospace; font-size:0.73rem;">
+          <div style="padding:5px 0; border-bottom:1px solid #222d38; color:#60a5fa;">
+            [INIT] Sistema IIoT iniciado — Lazo 4-20mA Cero Vivo OK
+          </div>
+        </div>
+        <button class="btn-full" onclick="exportCSVReport()">📄 Descargar Reporte de Mantenimiento (Excel / CSV)</button>
+      </div>
+
+      <div class="section-box" style="margin-bottom:0;">
+        <div class="section-title">
+          <span>🚨 Alertas en Vivo a tu Celular (Telegram)</span>
+        </div>
+        <div class="form-group">
+          <label>Telegram Bot Token (@BotFather)</label>
+          <input type="text" class="form-input" id="tgBotToken" placeholder="Ej: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" />
+        </div>
+        <div class="form-group">
+          <label>Tu Chat ID de Telegram</label>
+          <input type="text" class="form-input" id="tgChatId" placeholder="Ej: 987654321" />
+        </div>
+        <button class="btn-full" onclick="saveAndTestTelegram()">📲 Guardar y Enviar Alerta de Prueba</button>
+        <div id="tgFeedback" style="font-size:0.72rem; color:#9aa8b6; margin-top:6px; text-align:center;">
+          Envía alertas automáticas cuando cae el Cero Vivo (&lt; 3.6 mA) o hay sobrecarga.
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- PESTAÑA 4: CONEXIÓN ESP32, CALIBRACIÓN Y MANTENIMIENTO             -->
+    <!-- ================================================================== -->
+    <div id="view-settings" class="hidden">
+      <div class="section-box">
+        <div class="section-title">
+          <span>📡 Fuente de Datos (Simulador / ESP32 Local / SCADA)</span>
+        </div>
+        <div class="form-group">
+          <label>Modo de Operación de la App</label>
+          <select class="form-input" id="sourceModeSelect" onchange="changeSourceMode(this.value)">
+            <option value="sim">🧪 Simulador Interactivo Incorporado</option>
+            <option value="local">📡 Conexión Directa a IP del ESP32 (Modo Local)</option>
+            <option value="scada">🖥️ Servidor SCADA Central (localhost:3000)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dirección IP / Endpoint del Dispositivo ESP32 o SCADA</label>
+          <input type="text" class="form-input" id="endpointInput" value="http://192.168.4.1/api/telemetry" />
+        </div>
+      </div>
+
+      <div class="section-box" style="margin-bottom:0;">
+        <div class="section-title">
+          <span>🛠️ Acciones de Mantenimiento Mecatrónico</span>
+        </div>
+        <div class="form-group">
+          <label>Vida Útil Programada del Equipo (Horas)</label>
+          <input type="number" class="form-input" id="lifeHoursInput" value="99000" onchange="updateTotalLife(this.value)" />
+        </div>
+        <button class="btn-full" onclick="resetMaintenanceHours()">🔄 Reiniciar Horas de Uso a 0.00 hrs (FC06 Reg 40007)</button>
+        <button class="btn-full btn-danger-full" style="margin-top:8px;" onclick="installPWA()">📲 Instalar App en Pantalla de Inicio</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BARRA DE NAVEGACIÓN INFERIOR (4 PANTALLAS DE LA APP) -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-monitor" onclick="switchTab('monitor')">
+      <span class="icon">📊</span>
+      <span>Monitor</span>
+    </button>
+    <button class="nav-item" id="nav-scada" onclick="switchTab('scada')">
+      <span class="icon">⚡</span>
+      <span>4-20mA / PLC</span>
+    </button>
+    <button class="nav-item" id="nav-alarms" onclick="switchTab('alarms')">
+      <span class="icon">🚨</span>
+      <span>Alarmas</span>
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="switchTab('settings')">
+      <span class="icon">⚙️</span>
+      <span>Equipo</span>
+    </button>
+  </nav>
+
+  <script>
+    const MAX_POINTS = 30;
+    let totalLifeHours = 99000.00;
+
+    let activeTab = 'monitor';
+    let sourceMode = 'sim';
+    let simScenario = 'normal';
+    let manualLoopOverride = false;
+    let manualLoopValue = 12.00;
+
+    let currentMachineName = 'Bomba';
+    let currentUnitId = 1;
+    let hoursUsed = 0.48;
+    let lastStatusCode = 1;
+    let lastSnapshot = { current: 0.49, vibration: 0.00, loopmA: 12.00, loopPct: 50.0, loopBar: 5.00, statusCode: 1 };
+    let deferredPwaPrompt = null;
+
+    let vibrationHistory = [
+      0.00, 0.30, 0.00, 0.35, 1.05, 0.05, 0.28, 0.18, 0.40, 0.02,
+      0.32, 0.48, 0.42, 1.47, 0.22, 0.36, 0.02, 0.40, 0.03, 1.24,
+      0.02, 0.22, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00
+    ];
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+    });
+
+    function switchTab(tab) {
+      activeTab = tab;
+      ['monitor', 'scada', 'alarms', 'settings'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
+        document.getElementById('nav-' + t).classList.toggle('active', t === tab);
+      });
+      if (tab === 'monitor') {
+        setTimeout(drawChart, 20);
+      }
+    }
+
+    function changeAsset(val) {
+      const [name, unit] = val.split('|');
+      currentMachineName = name;
+      currentUnitId = Number(unit);
+      document.getElementById('deviceName').textContent = name;
+      logAlarm('INFO', `Activo seleccionado: ${name} (Modbus Slave ID 0${currentUnitId})`);
+    }
+
+    function setSimScenario(scenario) {
+      simScenario = scenario;
+      manualLoopOverride = false;
+      document.getElementById('manualLoopState').textContent = 'Automático';
+      ['normal', 'cavitation', 'overload', 'wirebreak'].forEach(id => {
+        const btn = document.getElementById('qbtn-' + id);
+        if (btn) btn.classList.toggle('active', id === scenario);
+      });
+    }
+
+    function onManualLoopSlide(val) {
+      manualLoopOverride = true;
+      manualLoopValue = parseFloat(val);
+      document.getElementById('manualLoopState').textContent = `Manual: ${manualLoopValue.toFixed(2)} mA`;
+      updateDashboard(lastSnapshot.current, lastSnapshot.vibration, hoursUsed, manualLoopValue, false);
+    }
+
+    function changeSourceMode(mode) {
+      sourceMode = mode;
+      const endpointEl = document.getElementById('endpointInput');
+      if (mode === 'local') {
+        endpointEl.value = 'http://192.168.4.1/api/telemetry';
+        document.getElementById('connStatusText').textContent = 'ESP32 LOCAL';
+      } else if (mode === 'scada') {
+        endpointEl.value = 'http://localhost:3000/api/telemetry';
+        document.getElementById('connStatusText').textContent = 'SCADA CENTRAL';
+      } else {
+        document.getElementById('connStatusText').textContent = 'MODO PLANTA (1s)';
+      }
+    }
+
+    function updateTotalLife(val) {
+      const n = parseFloat(val);
+      if (n > 0) totalLifeHours = n;
+    }
+
+    function resetMaintenanceHours() {
+      hoursUsed = 0.00;
+      logAlarm('INFO', 'Horómetro reiniciado a 0.00 hrs (Modbus FC06 Reg 40007 = 1)');
+      updateDashboard(lastSnapshot.current, lastSnapshot.vibration, hoursUsed, lastSnapshot.loopmA, true);
+      switchTab('monitor');
+    }
+
+    function logAlarm(severity, text) {
+      const list = document.getElementById('alarmList');
+      const item = document.createElement('div');
+      const color = severity === 'CRIT' ? '#f87171' : (severity === 'WARN' ? '#fbbf24' : '#60a5fa');
+      item.style.cssText = `padding:5px 0; border-bottom:1px solid #222d38; color:${color};`;
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+      list.prepend(item);
+    }
+
+    function clearAlarms() {
+      document.getElementById('alarmList').innerHTML = '';
+    }
+
+    async function sendTelegramMessage(msgText) {
+      const token = document.getElementById('tgBotToken').value.trim() || localStorage.getItem('tgBotToken') || '';
+      const chatId = document.getElementById('tgChatId').value.trim() || localStorage.getItem('tgChatId') || '';
+      if (!token || !chatId) return false;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `🚨 *[APP SCADA MECATRÓNICA]*\nActivo: *${currentMachineName}*\n${msgText}\n• Consumo: ${lastSnapshot.current.toFixed(2)} A\n• Vibración: ${lastSnapshot.vibration.toFixed(2)} Gs\n• Lazo 4-20mA: ${lastSnapshot.loopmA.toFixed(2)} mA`,
+            parse_mode: 'Markdown'
+          })
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function saveAndTestTelegram() {
+      const token = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+      const fb = document.getElementById('tgFeedback');
+
+      if (!token || !chatId) {
+        fb.style.color = '#fbbf24';
+        fb.textContent = '⚠️ Completá tu Bot Token y Chat ID primero.';
+        return;
+      }
+      localStorage.setItem('tgBotToken', token);
+      localStorage.setItem('tgChatId', chatId);
+
+      const ok = await sendTelegramMessage('✅ Alerta de prueba desde tu App Monitor IIoT.');
+      fb.style.color = ok ? '#4ade80' : '#f87171';
+      fb.textContent = ok
+        ? '✅ ¡Mensaje enviado a tu Telegram! Probá simular una falla.'
+        : '❌ Error al enviar. Revisá el Token y el Chat ID.';
+    }
+
+    function exportCSVReport() {
+      const rows = [
+        ['Fecha', 'Equipo', 'Corriente_A', 'Vibracion_Gs', 'Horas_Uso', 'Horas_Restantes', 'Lazo_mA', 'Lazo_Porcentaje', 'Presion_Bar', 'Estado_Modbus_40005'],
+        [
+          new Date().toISOString(),
+          currentMachineName,
+          lastSnapshot.current.toFixed(2),
+          lastSnapshot.vibration.toFixed(2),
+          hoursUsed.toFixed(2),
+          Math.max(0, totalLifeHours - hoursUsed).toFixed(2),
+          lastSnapshot.loopmA.toFixed(2),
+          lastSnapshot.loopPct.toFixed(1),
+          lastSnapshot.loopBar.toFixed(2),
+          lastSnapshot.statusCode
+        ]
+      ];
+      const csv = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = encodeURI(csv);
+      a.download = `Reporte_${currentMachineName}_${Date.now()}.csv`;
+      a.click();
+    }
+
+    function installPWA() {
+      if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+      } else {
+        alert('Para instalar como App nativa:\n• En Android / PC (Chrome o Edge): tocá el menú del navegador -> "Instalar aplicación".\n• En iPhone (Safari): tocá Compartir -> "Agregar a inicio".');
+      }
+    }
+
+    async function pollRemoteEndpoint() {
+      const url = document.getElementById('endpointInput').value.trim();
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json();
+        if (Array.isArray(data.history)) vibrationHistory = data.history;
+        hoursUsed = data.hoursUsed ?? hoursUsed;
+        updateDashboard(data.current, data.vibration, hoursUsed, data.loopmA ?? 12.0, true);
+      } catch (e) {
+        document.getElementById('connStatusText').textContent = 'SIN CONEXIÓN';
+      }
+    }
+
+    function stepSimulation() {
+      let current = 0.49;
+      let vibration = 0.00;
+      let loopmA = 12.00;
+
+      if (simScenario === 'normal') {
+        current = 0.48 + Math.random() * 0.03;
+        loopmA = 11.96 + Math.random() * 0.08;
+        const r = Math.random();
+        if (r > 0.76) vibration = 0.18 + Math.random() * 0.85;
+        else if (r > 0.52) vibration = 0.04 + Math.random() * 0.22;
+        else vibration = 0.00;
+      } else if (simScenario === 'cavitation') {
+        current = 0.68 + Math.random() * 0.12;
+        vibration = 1.62 + Math.random() * 0.72;
+        loopmA = 7.50 + Math.random() * 0.40;
+      } else if (simScenario === 'overload') {
+        current = 2.42 + Math.random() * 0.30;
+        vibration = 2.85 + Math.random() * 0.90;
+        loopmA = 19.70 + Math.random() * 0.25;
+      } else if (simScenario === 'wirebreak') {
+        current = 0.49;
+        vibration = 0.08;
+        loopmA = 0.00;
+      }
+
+      if (manualLoopOverride) {
+        loopmA = manualLoopValue;
+      } else {
+        document.getElementById('loopSlider').value = loopmA.toFixed(1);
+      }
+
+      if (current > 0.10) {
+        hoursUsed += 1 / 3600;
+      }
+
+      updateDashboard(current, vibration, hoursUsed, loopmA, false);
+    }
+
+    function updateDashboard(current, vibration, hours, loopmA, fromRemote) {
+      const remaining = Math.max(0, totalLifeHours - hours);
+
+      document.getElementById('valCurrent').textContent = `${current.toFixed(2)} A`;
+      document.getElementById('valVibration').textContent = `${vibration.toFixed(2)} Gs`;
+      document.getElementById('valHoursUsed').textContent = `${hours.toFixed(2)} hrs`;
+      document.getElementById('valHoursRem').innerHTML = `${remaining.toFixed(2)}<br>hrs`;
+
+      const lzBadge = document.getElementById('liveZeroBadge');
+      let loopPct = 0.0;
+      let loopBar = 0.0;
+      let wireBreak = false;
+
+      if (loopmA < 3.60) {
+        wireBreak = true;
+        lzBadge.className = 'live-zero-pill lz-fault';
+        lzBadge.textContent = 'FALLA CERO VIVO (< 4mA)';
+        document.getElementById('quickLoopLabel').textContent = `⚠️ Lazo: ${loopmA.toFixed(2)} mA (CABLE CORTADO)`;
+        document.getElementById('quickLoopLabel').style.color = '#f87171';
+      } else {
+        lzBadge.className = 'live-zero-pill lz-ok';
+        lzBadge.textContent = 'CERO VIVO OK (4-20mA)';
+        loopPct = Math.max(0, Math.min(100, ((loopmA - 4.0) / 16.0) * 100.0));
+        loopBar = (loopPct / 100.0) * 10.0;
+        document.getElementById('quickLoopLabel').textContent = `Lazo: ${loopmA.toFixed(2)} mA (${loopPct.toFixed(0)}%)`;
+        document.getElementById('quickLoopLabel').style.color = '#00b8e6';
+      }
+
+      document.getElementById('valLoopmA').textContent = `${loopmA.toFixed(2)} mA`;
+      document.getElementById('valLoopPct').textContent = wireBreak ? 'ERR' : `${loopPct.toFixed(1)} %`;
+      document.getElementById('valLoopBar').textContent = wireBreak ? '---' : `${loopBar.toFixed(2)} Bar`;
+
+      const banner = document.getElementById('statusBanner');
+      banner.className = 'status-banner';
+
+      let statusCode = 1;
+      let statusDesc = '1 = NORMAL';
+
+      if (wireBreak) {
+        statusCode = 4;
+        statusDesc = '4 = LAZO ABIERTO';
+        banner.classList.add('status-danger');
+        banner.textContent = 'ESTADO: ¡FALLA LAZO 4-20mA (0 mA)!';
+      } else if (current < 0.08) {
+        statusCode = 0;
+        statusDesc = '0 = STOP';
+        banner.classList.add('status-off');
+        banner.textContent = 'ESTADO: BOMBA DETENIDA';
+      } else if (current >= 1.80 || vibration >= 2.50) {
+        statusCode = 3;
+        statusDesc = '3 = SOBRECARGA';
+        banner.classList.add('status-danger');
+        banner.textContent = 'ESTADO: ¡FALLA / SOBRECARGA!';
+      } else if (vibration >= 1.50 || current >= 0.90) {
+        statusCode = 2;
+        statusDesc = '2 = ALERTA VIB.';
+        banner.classList.add('status-warning');
+        banner.textContent = 'ESTADO: ALERTA DE VIBRACIÓN';
+      } else {
+        statusCode = 1;
+        statusDesc = '1 = NORMAL';
+        banner.classList.add('status-normal');
+        banner.textContent = 'ESTADO: OPERACIÓN NORMAL';
+      }
+
+      lastSnapshot = { current, vibration, loopmA, loopPct, loopBar, statusCode };
+
+      const r40001 = Math.round(current * 100);
+      const r40002 = Math.round(vibration * 100);
+      const r40003 = Math.floor(hours);
+      const r40004 = Math.round((hours - r40003) * 100);
+      const r40008 = Math.round(loopmA * 100);
+      const r40009 = Math.round(loopPct * 100);
+
+      document.getElementById('reg40001').textContent = r40001;
+      document.getElementById('eng40001').textContent = `${current.toFixed(2)} A`;
+      document.getElementById('reg40002').textContent = r40002;
+      document.getElementById('eng40002').textContent = `${vibration.toFixed(2)} Gs`;
+      document.getElementById('reg40003').textContent = `${r40003}:${r40004}`;
+      document.getElementById('eng40003').textContent = `${hours.toFixed(2)} hrs`;
+      document.getElementById('reg40005').textContent = statusCode;
+      document.getElementById('eng40005').textContent = statusDesc;
+      document.getElementById('reg40008').textContent = r40008;
+      document.getElementById('eng40008').textContent = `${loopmA.toFixed(2)} mA`;
+      document.getElementById('reg40009').textContent = r40009;
+      document.getElementById('eng40009').textContent = wireBreak ? 'CABLE CORTADO' : `${loopPct.toFixed(1)} %`;
+
+      if (statusCode !== lastStatusCode) {
+        if (statusCode === 4) {
+          const msg = `Alarma Cero Vivo (< 4mA): Lazo en ${loopmA.toFixed(2)} mA (Cable cortado)`;
+          logAlarm('CRIT', msg);
+          sendTelegramMessage(msg);
+        } else if (statusCode === 3) {
+          const msg = `Disparo por Sobrecarga / Rotor Trabado (${current.toFixed(2)} A, ${vibration.toFixed(2)} Gs)`;
+          logAlarm('CRIT', msg);
+          sendTelegramMessage(msg);
+        } else if (statusCode === 2) {
+          logAlarm('WARN', `Alerta de Vibración en Rodamientos (${vibration.toFixed(2)} Gs)`);
+        } else if (statusCode === 1) {
+          logAlarm('INFO', `Retorno a Operación Normal`);
+        }
+        lastStatusCode = statusCode;
+      }
+
+      if (!fromRemote) {
+        vibrationHistory.push(vibration);
+        if (vibrationHistory.length > MAX_POINTS) vibrationHistory.shift();
+      }
+
+      if (activeTab === 'monitor') {
+        drawChart();
+      }
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById('vibrationChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+
+      const padLeft = 46;
+      const padRight = 8;
+      const padTop = 12;
+      const padBottom = 14;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const peakInWindow = Math.max(...vibrationHistory, 1.47);
+      const maxG = Math.max(1.47, Math.ceil(peakInWindow * 100) / 100);
+
+      const steps = 3;
+      ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      for (let i = 0; i <= steps; i++) {
+        const ratio = i / steps;
+        const y = padTop + plotH - ratio * plotH;
+        const val = (ratio * maxG).toFixed(2) + ' G';
+
+        ctx.fillStyle = '#7e8c9b';
+        ctx.fillText(val, padLeft - 8, y);
+
+        ctx.strokeStyle = '#26323d';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+      }
+
+      if (vibrationHistory.length < 2) return;
+
+      const points = vibrationHistory.map((v, idx) => {
+        const x = padLeft + (idx / (MAX_POINTS - 1)) * plotW;
+        const clamped = Math.min(maxG, Math.max(0, v));
+        const y = padTop + plotH - (clamped / maxG) * plotH;
+        return { x, y };
+      });
+
+      const grad = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
+      grad.addColorStop(0, 'rgba(0, 184, 230, 0.35)');
+      grad.addColorStop(1, 'rgba(0, 184, 230, 0.0)');
+
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, padTop + plotH);
+      points.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(points[points.length - 1].x, padTop + plotH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.strokeStyle = '#00b8e6';
+      ctx.lineWidth = 2.4;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('tgBotToken').value = localStorage.getItem('tgBotToken') || '';
+      document.getElementById('tgChatId').value = localStorage.getItem('tgChatId') || '';
+      drawChart();
+    });
+
+    setInterval(() => {
+      if (sourceMode === 'sim') {
+        stepSimulation();
+      } else {
+        pollRemoteEndpoint();
+      }
+    }, 1000);
+
+    window.addEventListener('resize', drawChart);
+  </script>
+</body>
+</html>

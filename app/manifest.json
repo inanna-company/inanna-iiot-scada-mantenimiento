@@ -1,0 +1,22 @@
+{
+  "name": "INANNA COMPANY - Monitor Industrial IIoT & SCADA",
+  "short_name": "INANNA IIoT",
+  "description": "INANNA Automation & Industries: Mantenimiento Predictivo, Lazo 4-20 mA, ESP-NOW y SCADA Modbus",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0e13",
+  "theme_color": "#14191f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "../isotipo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "../LOGO.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

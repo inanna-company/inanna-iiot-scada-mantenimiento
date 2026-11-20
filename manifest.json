@@ -1,0 +1,17 @@
+{
+  "name": "Monitor Industrial IIoT - SCADA & Modbus",
+  "short_name": "SCADA IIoT",
+  "description": "Sistema de Mantenimiento Predictivo, Lazo 4-20 mA y SCADA Modbus TCP/RTU",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f14",
+  "theme_color": "#14191f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2314191f'/><circle cx='50' cy='50' r='34' fill='none' stroke='%2300b8e6' stroke-width='6'/><polyline points='24,54 40,54 47,32 55,70 63,46 76,46' fill='none' stroke='%2322c55e' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+# =====================================================================
+# PROTECCIÓN DE PROPIEDAD INTELECTUAL - INANNA COMPANY
+# Solo se publican en GitHub los Catálogos y Demos Web (HTML/PWA/Logos).
+# Firmwares (.ino), Java (.java/.jar), Scripts (.py/.bat/.js) y Planos
+# quedan 100% PRIVADOS en el disco local y excluidos del repositorio.
+# =====================================================================
+
+# Firmwares ESP32 / Arduino / C++ (PROPIEDAD INTELECTUAL PRIVADA)
+*.ino
+*.cpp
+*.c
+*.h
+*.bin
+*.elf
+esp32_bomba_monitor/
+
+# Código Fuente y Ejecutables Java / Backend Node (PRIVADO)
+*.java
+*.jar
+*.class
+manifest.txt
+scada_server.js
+*.jsonl
+
+# Scripts de Producción, Flasheo y Automatización Local (PRIVADO)
+*.bat
+*.py
+tools/
+selenium_linkedin_profile/
+linkedin_inanna_studio.html
+Banner_LinkedIn_Fabio_Medina_INANNA.png
+Flyer_Foro_Cordoba_INANNA.png
+"Imagen de ChatGPT 7 oct 2026, 03_10_07 a.m.png"
+
+# Documentación de Ingeniería Interna y Planos de Hardware (PRIVADO)
+*.md
+!README.md
+*.pdf
+_tmp_pdf_render.html
+*.log

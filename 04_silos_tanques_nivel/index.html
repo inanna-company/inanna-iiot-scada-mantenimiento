@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04 - Silos y Tanques (Nivel 4-20 mA) | Telemetría Industrial</title>
+  <style>
+    :root {
+      --bg-body: #0a0e13;
+      --bg-main: #14191f;
+      --bg-card: #182026;
+      --border-card: #28343e;
+      --accent: #22c55e;
+      --title-color: #4ade80;
+      --text-label: #9aa8b6;
+      --green-bg: #1e6b27; --green-text: #a5d6a7;
+      --yellow-bg: #85581A; --yellow-text: #ffe082;
+      --red-bg: #8b1e24; --red-text: #ef9a9a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg-body); color: #fff; display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
+    .nav-back { width: 100%; max-width: 440px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; }
+    .nav-back a { color: #38bdf8; text-decoration: none; font-weight: 700; }
+    .app-container { width: 100%; max-width: 440px; background: var(--bg-main); border: 1px solid #25303b; border-radius: 18px; padding: 20px 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.7); }
+    h1 { text-align: center; color: var(--title-color); font-size: 1.85rem; margin-bottom: 6px; }
+    .subtitle { text-align: center; color: var(--text-label); font-size: 0.76rem; margin-bottom: 14px; }
+    .divider { height: 1px; background: #293440; margin-bottom: 16px; }
+    .status-banner { width: 100%; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1.02rem; margin-bottom: 16px; text-transform: uppercase; }
+    .status-normal { background: var(--green-bg); color: var(--green-text); }
+    .status-warning { background: var(--yellow-bg); color: var(--yellow-text); }
+    .status-danger { background: var(--red-bg); color: var(--red-text); }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 16px 10px; text-align: center; }
+    .metric-label { color: var(--text-label); font-size: 0.78rem; text-transform: uppercase; margin-bottom: 8px; }
+    .metric-value { color: #4ade80; font-size: 1.8rem; font-weight: 700; }
+    .tank-visual { background: #10161d; border: 2px solid #2d3d4d; border-radius: 12px; height: 42px; overflow: hidden; margin-bottom: 14px; position: relative; }
+    .tank-fill { height: 100%; width: 65%; background: linear-gradient(90deg, #0284c7, #22c55e); transition: width 0.3s ease; }
+    .tank-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; text-shadow: 0 1px 4px #000; }
+    .loop-box { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 12px; margin-bottom: 14px; font-size: 0.78rem; }
+    .loop-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #cbd5e1; font-weight: 600; }
+    .sim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .sim-btn { background: #121920; color: #cbd5e1; border: 1px solid #2a3947; padding: 8px; border-radius: 7px; font-size: 0.74rem; cursor: pointer; font-weight: 600; }
+    .sim-btn.active { border-color: var(--accent); background: rgba(34,197,94,0.18); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="nav-back">
+    <a href="../catalogo_industrial.html" style="display:flex;align-items:center;gap:6px;"><img src="../isotipo.jpg" style="width:22px;height:22px;border-radius:4px;" /> ⬅ INANNA Catálogo</a>
+    <span style="color:#7e8c9b;">INANNA AUTOMATION | Radar 4-20mA</span>
+  </div>
+  <div class="app-container">
+    <h1>Silo / Tanque 50.000 L</h1>
+    <div class="subtitle">Medición de Nivel Continua por Lazo 4–20 mA y Control de Bombas</div>
+    <div class="divider"></div>
+    <div id="banner" class="status-banner status-normal">ESTADO: NIVEL NORMAL (65%)</div>
+
+    <div class="tank-visual">
+      <div class="tank-fill" id="tankBar"></div>
+      <div class="tank-text" id="tankLabel">32,500 Litros (65.0%)</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label">NIVEL (%)</div><div class="metric-value" id="vPct">65.0 %</div></div>
+      <div class="metric-card"><div class="metric-label">VOLUMEN</div><div class="metric-value" id="vVol">32,500 L</div></div>
+      <div class="metric-card"><div class="metric-label">SEÑAL LAZO</div><div class="metric-value" id="vMa">14.40 mA</div></div>
+      <div class="metric-card"><div class="metric-label">TEMP. FLUIDO</div><div class="metric-value" id="vTemp">21.5 °C</div></div>
+    </div>
+
+    <div class="loop-box">
+      <div class="loop-row">
+        <span>🎛️ Simular Nivel en Lazo 4–20 mA (0 a 20.5 mA):</span>
+        <span id="vZero" style="color:#4ade80;">CERO VIVO OK</span>
+      </div>
+      <input type="range" min="0" max="20.5" step="0.1" value="14.4" style="width:100%;accent-color:#22c55e;margin:6px 0;" id="slider" oninput="updateLevel(this.value)" />
+      <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:#8a99a8;">
+        <span>0mA (Corte)</span>
+        <span>4mA (0 L)</span>
+        <span>12mA (25.000 L)</span>
+        <span>20mA (50.000 L)</span>
+      </div>
+    </div>
+
+    <div class="sim-grid">
+      <button class="sim-btn active" onclick="updateLevel(14.4)">🟢 Nivel Óptimo (14.4 mA = 65%)</button>
+      <button class="sim-btn" onclick="updateLevel(5.2)">🟡 Nivel Bajo Reserva (5.2 mA = 7.5%)</button>
+      <button class="sim-btn" onclick="updateLevel(19.6)">🔴 Alarma Rebalse (19.6 mA = 97.5%)</button>
+      <button class="sim-btn" onclick="updateLevel(0.0)">✂️ Cable Cortado (0.0 mA &lt; 4mA)</button>
+    </div>
+  </div>
+
+  <script>
+    function updateLevel(val) {
+      const mA = parseFloat(val);
+      document.getElementById('slider').value = mA;
+      const b = document.getElementById('banner'), z = document.getElementById('vZero'), bar = document.getElementById('tankBar');
+      if (mA < 3.6) {
+        z.textContent = '⚠️ CABLE CORTADO (<4mA)'; z.style.color = '#f87171';
+        b.className = 'status-banner status-danger';
+        b.textContent = '¡FALLA DE LAZO 4-20mA (CERO VIVO)!';
+        document.getElementById('vPct').textContent = 'ERR';
+        document.getElementById('vVol').textContent = '--- L';
+        document.getElementById('vMa').textContent = mA.toFixed(2) + ' mA';
+        bar.style.width = '100%'; bar.style.background = '#ef4444';
+        document.getElementById('tankLabel').textContent = '⚠️ SENSOR DESCONECTADO (0.00 mA)';
+        return;
+      }
+      z.textContent = 'CERO VIVO OK'; z.style.color = '#4ade80';
+      const pct = Math.max(0, Math.min(100, ((mA - 4.0)/16.0)*100));
+      const litros = Math.round((pct/100)*50000);
+      document.getElementById('vPct').textContent = pct.toFixed(1) + ' %';
+      document.getElementById('vVol').textContent = litros.toLocaleString() + ' L';
+      document.getElementById('vMa').textContent = mA.toFixed(2) + ' mA';
+      bar.style.width = pct + '%';
+      bar.style.background = 'linear-gradient(90deg, #0284c7, #22c55e)';
+      document.getElementById('tankLabel').textContent = `${litros.toLocaleString()} Litros (${pct.toFixed(1)}%)`;
+
+      if (pct >= 92) {
+        b.className = 'status-banner status-danger'; b.textContent = '¡ALARMA ALTO NIVEL / REBALSE!';
+      } else if (pct <= 12) {
+        b.className = 'status-banner status-warning'; b.textContent = 'ALERTA: NIVEL BAJO DE RESERVA';
+      } else {
+        b.className = 'status-banner status-normal'; b.textContent = `ESTADO: NIVEL NORMAL (${pct.toFixed(0)}%)`;
+      }
+    }
+  </script>
+</body>
+</html>

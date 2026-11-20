@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05 - Cadena de Frío, Cámaras y Calderas | PT100 4-20 mA + SCADA</title>
+  <style>
+    :root {
+      --bg-body: #0a0e13;
+      --bg-main: #14191f;
+      --bg-card: #182026;
+      --border-card: #28343e;
+      --accent: #06b6d4;
+      --title-color: #22d3ee;
+      --text-label: #9aa8b6;
+      --green-bg: #1e6b27; --green-text: #a5d6a7;
+      --yellow-bg: #85581A; --yellow-text: #ffe082;
+      --red-bg: #8b1e24; --red-text: #ef9a9a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg-body); color: #fff; display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
+    .nav-back { width: 100%; max-width: 440px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; }
+    .nav-back a { color: #38bdf8; text-decoration: none; font-weight: 700; }
+    .app-container { width: 100%; max-width: 440px; background: var(--bg-main); border: 1px solid #25303b; border-radius: 18px; padding: 20px 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.7); }
+    h1 { text-align: center; color: var(--title-color); font-size: 1.85rem; margin-bottom: 6px; }
+    .subtitle { text-align: center; color: var(--text-label); font-size: 0.76rem; margin-bottom: 14px; }
+    .divider { height: 1px; background: #293440; margin-bottom: 16px; }
+    .status-banner { width: 100%; padding: 14px; border-radius: 10px; text-align: center; font-weight: 700; font-size: 1.02rem; margin-bottom: 16px; text-transform: uppercase; }
+    .status-normal { background: var(--green-bg); color: var(--green-text); }
+    .status-warning { background: var(--yellow-bg); color: var(--yellow-text); }
+    .status-danger { background: var(--red-bg); color: var(--red-text); }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 16px 10px; text-align: center; }
+    .metric-label { color: var(--text-label); font-size: 0.78rem; text-transform: uppercase; margin-bottom: 8px; }
+    .metric-value { color: var(--accent); font-size: 1.8rem; font-weight: 700; }
+    .loop-box { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 12px; margin-bottom: 14px; font-size: 0.78rem; }
+    .loop-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #cbd5e1; font-weight: 600; }
+    .sim-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .sim-btn { background: #121920; color: #cbd5e1; border: 1px solid #2a3947; padding: 8px; border-radius: 7px; font-size: 0.74rem; cursor: pointer; font-weight: 600; }
+    .sim-btn.active { border-color: var(--accent); background: rgba(6,182,212,0.18); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="nav-back">
+    <a href="../catalogo_industrial.html" style="display:flex;align-items:center;gap:6px;"><img src="../isotipo.jpg" style="width:22px;height:22px;border-radius:4px;" /> ⬅ INANNA Catálogo</a>
+    <span style="color:#7e8c9b;">INANNA SERVICE | PT100 4-20mA</span>
+  </div>
+  <div class="app-container">
+    <h1>Cámara Frigorífica #01</h1>
+    <div class="subtitle">Auditoría Cadena de Frío (SENASA/ANMAT), Compresor y Puerta</div>
+    <div class="divider"></div>
+    <div id="banner" class="status-banner status-normal">CADENA DE FRÍO OK (-18.4 °C)</div>
+
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label">TEMP. CÁMARA</div><div class="metric-value" id="vTemp">-18.4 °C</div></div>
+      <div class="metric-card"><div class="metric-label">PRESIÓN SUCCIÓN</div><div class="metric-value" id="vBar">2.10 Bar</div></div>
+      <div class="metric-card"><div class="metric-label">COMPRESOR</div><div class="metric-value" id="vAmp">11.2 A</div></div>
+      <div class="metric-card"><div class="metric-label">ESTADO PUERTA</div><div class="metric-value" id="vDoor">CERRADA</div></div>
+    </div>
+
+    <div class="loop-box">
+      <div class="loop-row">
+        <span>⚡ Transmisor PT100 4-20mA (-30°C a +50°C):</span>
+        <span id="vLoop" style="color:#22d3ee;font-family:monospace;">6.32 mA (14.5%)</span>
+      </div>
+      <div class="loop-row" style="margin-bottom:0;font-size:0.72rem;color:#9aa8b6;">
+        <span>Reg Modbus 40008: <b id="vReg" style="color:#fbbf24;">632</b></span>
+        <span id="vZero" style="color:#4ade80;">CERO VIVO OK (≥ 4mA)</span>
+      </div>
+    </div>
+
+    <div class="sim-grid">
+      <button class="sim-btn active" id="b-normal" onclick="setMode('normal')">🟢 Congelado Nominal (-18.4 °C)</button>
+      <button class="sim-btn" id="b-door" onclick="setMode('door')">🟡 Puerta Abierta / Desescarche (-8 °C)</button>
+      <button class="sim-btn" id="b-fail" onclick="setMode('fail')">🔴 Ruptura Cadena Frío (+4.5 °C)</button>
+      <button class="sim-btn" id="b-cut" onclick="setMode('cut')">✂️ Sonda PT100 Cortada (0.0 mA)</button>
+    </div>
+  </div>
+
+  <script>
+    let mode = 'normal';
+    function setMode(m) {
+      mode = m;
+      ['normal','door','fail','cut'].forEach(k => document.getElementById('b-'+k).classList.toggle('active', k===m));
+    }
+    setInterval(() => {
+      let temp = -18.4, bar = 2.1, amp = 11.2, door = 'CERRADA', mA = 6.32;
+      // Escala PT100: 4mA = -30°C, 20mA = +50°C (Span = 80°C)
+      if (mode === 'normal') {
+        temp = -18.5 + Math.random()*0.3; bar = 2.1 + Math.random()*0.1; amp = 11.1 + Math.random()*0.3;
+        mA = 4.0 + ((temp + 30)/80)*16.0;
+      } else if (mode === 'door') {
+        temp = -8.2 + Math.random()*0.5; bar = 3.4; amp = 14.8; door = 'ABIERTA';
+        mA = 4.0 + ((temp + 30)/80)*16.0;
+      } else if (mode === 'fail') {
+        temp = 4.5 + Math.random()*0.6; bar = 5.8; amp = 0.0; door = 'CERRADA';
+        mA = 4.0 + ((temp + 30)/80)*16.0;
+      } else if (mode === 'cut') {
+        temp = 0; mA = 0.00;
+      }
+      let pct = Math.max(0, ((mA - 4)/16)*100);
+      document.getElementById('vTemp').textContent = mA < 3.6 ? 'ERR' : temp.toFixed(1) + ' °C';
+      document.getElementById('vBar').textContent = bar.toFixed(2) + ' Bar';
+      document.getElementById('vAmp').textContent = amp.toFixed(1) + ' A';
+      document.getElementById('vDoor').textContent = door;
+      document.getElementById('vLoop').textContent = `${mA.toFixed(2)} mA (${mA<3.6?'FALLA':pct.toFixed(1)+'%'})`;
+      document.getElementById('vReg').textContent = Math.round(mA*100);
+
+      const z = document.getElementById('vZero'), b = document.getElementById('banner');
+      if (mA < 3.6) {
+        z.textContent = '⚠️ SONDA CORTADA (< 4mA)'; z.style.color = '#f87171';
+        b.className = 'status-banner status-danger'; b.textContent = '¡FALLA TRANSMISOR PT100 (0.0 mA)!';
+      } else if (mode === 'fail') {
+        z.textContent = 'CERO VIVO OK'; z.style.color = '#4ade80';
+        b.className = 'status-banner status-danger'; b.textContent = '¡PELIGRO RUPTURA CADENA DE FRÍO!';
+      } else if (mode === 'door') {
+        z.textContent = 'CERO VIVO OK'; z.style.color = '#4ade80';
+        b.className = 'status-banner status-warning'; b.textContent = 'ALERTA: PUERTA ABIERTA / ALTA TEMP';
+      } else {
+        z.textContent = 'CERO VIVO OK'; z.style.color = '#4ade80';
+        b.className = 'status-banner status-normal'; b.textContent = `CADENA DE FRÍO OK (${temp.toFixed(1)} °C)`;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

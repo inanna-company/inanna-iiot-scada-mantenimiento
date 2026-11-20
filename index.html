@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#14191f" />
+  <link rel="icon" type="image/jpeg" href="./isotipo.jpg" />
+  <link rel="manifest" href="manifest.json" />
+  <title>INANNA COMPANY | Monitor Industrial IIoT - Bomba | SCADA & Lazo 4-20 mA</title>
+  <style>
+    :root {
+      --bg-main: #14191f;
+      --bg-card: #182026;
+      --border-card: #28343e;
+      --cyan: #00b8e6;
+      --text-label: #9aa8b6;
+      --text-muted: #5b6977;
+      --green-bg: #1e6b27;
+      --green-text: #a5d6a7;
+      --yellow-bg: #85581A;
+      --yellow-text: #ffe082;
+      --red-bg: #8b1e24;
+      --red-text: #ef9a9a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0b0f14;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 14px;
+    }
+
+    /* Barra Comercial Superior (Selector de Máquina + Reporte + Telegram + Ir a la App Móvil) */
+    .top-brand-bar {
+      width: 100%;
+      max-width: 1020px;
+      background: #141b22;
+      border: 1px solid #263340;
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #00b8e6, #0284c7);
+      color: #081018;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 4px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .machine-select {
+      background: #0d1318;
+      color: #fff;
+      border: 1px solid #2d3d4d;
+      padding: 6px 10px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tool-btn {
+      background: #1b2530;
+      color: #dbe7f3;
+      border: 1px solid #2f4052;
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+      text-decoration: none;
+    }
+
+    .tool-btn:hover {
+      border-color: var(--cyan);
+      color: #fff;
+    }
+
+    .tool-btn-primary {
+      background: rgba(0, 184, 230, 0.16);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .main-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      width: 100%;
+      max-width: 1020px;
+      align-items: flex-start;
+    }
+
+    /* COLUMNA IZQUIERDA: APP MÓVIL IDÉNTICA A LA CAPTURA */
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      background-color: var(--bg-main);
+      border: 1px solid #232d37;
+      border-radius: 16px;
+      padding: 22px 18px 18px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .app-title {
+      text-align: center;
+      color: #1890ff;
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 16px;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #293440;
+      margin-bottom: 20px;
+    }
+
+    .status-banner {
+      width: 100%;
+      padding: 15px 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .status-normal { background-color: var(--green-bg); color: var(--green-text); }
+    .status-warning { background-color: var(--yellow-bg); color: var(--yellow-text); }
+    .status-danger {
+      background-color: var(--red-bg);
+      color: var(--red-text);
+      animation: pulseDanger 1.1s infinite alternate;
+    }
+    .status-off { background-color: #2b343d; color: #9aa8b6; }
+
+    @keyframes pulseDanger {
+      from { box-shadow: 0 0 0px rgba(239, 83, 80, 0.2); }
+      to { box-shadow: 0 0 20px rgba(239, 83, 80, 0.75); }
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 18px 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 118px;
+    }
+
+    .metric-label {
+      color: var(--text-label);
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      color: var(--cyan);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .chart-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 16px 14px 14px;
+      margin-bottom: 16px;
+    }
+
+    .chart-title {
+      text-align: center;
+      color: var(--text-label);
+      font-size: 0.85rem;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 200px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-top: 4px;
+    }
+
+    /* COLUMNA DERECHA: CONSOLA SCADA + MODBUS + LAZO 4-20 mA */
+    .scada-panel {
+      width: 100%;
+      max-width: 550px;
+      background-color: var(--bg-main);
+      border: 1px solid #263340;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .scada-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #263340;
+    }
+
+    .scada-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .mode-badge {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 184, 230, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 184, 230, 0.4);
+      font-weight: 700;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .mode-btn {
+      background: #10161c;
+      color: #9aa8b6;
+      border: 1px solid #283542;
+      padding: 8px 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--cyan);
+      color: #0b1116;
+      border-color: var(--cyan);
+    }
+
+    .section-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-label);
+      margin-bottom: 9px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sim-presets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      background: #121920;
+      color: #d1dce5;
+      border: 1px solid #2a3947;
+      padding: 7px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.74rem;
+      text-align: left;
+    }
+
+    .preset-btn.selected {
+      border-color: var(--cyan);
+      background: rgba(0, 184, 230, 0.16);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Widget Lazo de Corriente 4-20 mA */
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .loop-stat {
+      background: #11181f;
+      border: 1px solid #243240;
+      border-radius: 7px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .loop-stat-label {
+      font-size: 0.68rem;
+      color: #8a99a8;
+      margin-bottom: 3px;
+    }
+
+    .loop-stat-val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: monospace;
+    }
+
+    .loop-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #0d1318;
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid #253341;
+      margin-bottom: 8px;
+    }
+
+    .loop-bar-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #00b8e6, #22c55e);
+      transition: width 0.25s ease, background 0.25s ease;
+    }
+
+    .live-zero-pill {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    .lz-ok { background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .lz-fault { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #ef4444; }
+
+    /* Tabla Mapa de Registros Modbus */
+    .modbus-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    .modbus-table th, .modbus-table td {
+      padding: 5px 7px;
+      text-align: left;
+      border-bottom: 1px solid #222d38;
+    }
+
+    .modbus-table th {
+      color: #7e8c9b;
+      font-weight: 600;
+    }
+
+    .reg-badge {
+      font-family: monospace;
+      background: #10171e;
+      color: #38bdf8;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #233446;
+    }
+
+    .reg-raw {
+      font-family: monospace;
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .input-row input {
+      flex: 1;
+      background: #0d1217;
+      border: 1px solid #2c3a47;
+      color: #fff;
+      padding: 7px 9px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+    }
+
+    .btn-action {
+      background: var(--cyan);
+      color: #0b1116;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
+
+    .btn-warn {
+      background: #d97706;
+      color: #fff;
+    }
+
+    .alarm-list {
+      max-height: 100px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.72rem;
+    }
+
+    .alarm-item {
+      padding: 4px 6px;
+      border-bottom: 1px solid #222d38;
+      display: flex;
+      gap: 8px;
+    }
+
+    .alarm-crit { color: #f87171; }
+    .alarm-warn { color: #fbbf24; }
+    .alarm-info { color: #60a5fa; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR COMERCIAL: LOGO INANNA COMPANY + SELECTOR DE EQUIPO + REPORTE + ALERTAS + ABRIR APP MÓVIL -->
+  <div class="top-brand-bar">
+    <div class="brand-left">
+      <img src="./logo horizontal.jpg" alt="INANNA COMPANY" style="height:38px; border-radius:6px; border:1px solid #263545;" />
+      <select class="machine-select" id="machineSelector" onchange="changeMachine(this.value)">
+        <option value="Bomba|1">Activo #01: Bomba (Unit ID 01)</option>
+        <option value="Compresor|2">Activo #02: Compresor Tornillo (Unit ID 02)</option>
+        <option value="Torre Enfr.|3">Activo #03: Torre Enfriamiento (Unit ID 03)</option>
+      </select>
+    </div>
+
+    <div class="toolbar-actions">
+      <button class="tool-btn" onclick="toggleTelegramPanel()">🚨 Alertas Telegram</button>
+      <button class="tool-btn" onclick="exportMaintenanceCSV()">📄 Exportar Reporte CSV</button>
+      <a class="tool-btn tool-btn-primary" href="./app/index.html">📱 Abrir Versión App Móvil (/app)</a>
+    </div>
+  </div>
+
+  <!-- MODAL DESPLEGABLE DE CONFIGURACIÓN TELEGRAM -->
+  <div id="telegramModal" class="top-brand-bar hidden" style="background:#16222f; border-color:#00b8e6;">
+    <div style="width:100%;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.8rem; font-weight:700; color:#38bdf8;">
+        <span>📲 Notificaciones Industriales Automáticas a Telegram (Disparo por Falla Crítica o Cable Cortado &lt; 4mA)</span>
+        <span style="cursor:pointer; color:#9aa8b6;" onclick="toggleTelegramPanel()">✕ Cerrar</span>
+      </div>
+      <div class="input-row">
+        <input type="text" id="tgBotToken" placeholder="Pegá tu Bot Token (ej. 123456:ABC-DEF...)" />
+        <input type="text" id="tgChatId" placeholder="Pegá tu Chat ID (ej. 987654321)" />
+        <button class="btn-action" onclick="saveAndTestTelegram()">Guardar y Enviar Alerta de Prueba</button>
+      </div>
+      <div id="tgStatusMsg" style="font-size:0.73rem; color:#9aa8b6; margin-top:6px;">
+        Podés crear un bot gratis hablando con @BotFather en Telegram. Al detectar falla en registro 40005 o 40010, te avisa al celular al instante.
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- ==================================================================== -->
+    <!-- 1. VISTA HMI OPERADOR (IDÉNTICA A LA CAPTURA DE INSTAGRAM)           -->
+    <!-- ==================================================================== -->
+    <div class="app-container">
+      <h1 class="app-title" id="deviceName">Bomba</h1>
+      <div class="divider"></div>
+
+      <div id="statusBanner" class="status-banner status-normal">
+        ESTADO: OPERACIÓN NORMAL
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">CONSUMO</div>
+          <div class="metric-value" id="valCurrent">0.49 A</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">VIBRACIÓN</div>
+          <div class="metric-value" id="valVibration">0.00 Gs</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">HORAS USO</div>
+          <div class="metric-value" id="valHoursUsed">0.48 hrs</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">HORAS REST.</div>
+          <div class="metric-value" id="valHoursRem">98999.52<br>hrs</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">VIBRACIÓN EN TIEMPO REAL (ÚLTIMOS 30 SEG)</div>
+        <div class="chart-wrapper">
+          <canvas id="vibrationChart"></canvas>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Actualizado automáticamente cada 1 seg
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 2. CONSOLA DE INGENIERÍA: LAZO 4-20 mA + SCADA + MODBUS TCP/RTU      -->
+    <!-- ==================================================================== -->
+    <div class="scada-panel">
+      <div class="scada-header">
+        <div class="scada-title">🏭 SCADA Industrial | Modbus TCP/RS485 + Lazo 4-20 mA</div>
+        <span id="connectionBadge" class="mode-badge">SIMULADOR PLANTA</span>
+      </div>
+
+      <div class="mode-tabs">
+        <button class="mode-btn active" onclick="setSourceMode('sim')" id="tab-sim">🧪 Simulador Planta</button>
+        <button class="mode-btn" onclick="setSourceMode('local')" id="tab-local">📡 ESP32 Directo</button>
+        <button class="mode-btn" onclick="setSourceMode('scada')" id="tab-scada">🖥️ Servidor SCADA</button>
+      </div>
+
+      <!-- Panel Simulador de Fallas Electromecánicas y de Instrumentación -->
+      <div id="panel-sim" class="section-box">
+        <div class="section-title">
+          <span>Escenarios Electromecánicos & Lazo 4-20 mA</span>
+          <span id="unitIdLabel">Unit ID: 01</span>
+        </div>
+        <div class="sim-presets">
+          <button class="preset-btn selected" id="preset-normal" onclick="setSimScenario('normal')">🟢 Operación Nominal (12.0 mA = 50%)</button>
+          <button class="preset-btn" id="preset-cavitation" onclick="setSimScenario('cavitation')">🟡 Alerta Vibración Rodamientos</button>
+          <button class="preset-btn" id="preset-overload" onclick="setSimScenario('overload')">🔴 Rotor Trabado / Sobrecarga (20 mA)</button>
+          <button class="preset-btn" id="preset-wirebreak" onclick="setSimScenario('wirebreak')">✂️ Cable Cortado Lazo 4-20mA (0.0 mA)</button>
+        </div>
+      </div>
+
+      <!-- Panel Conexión Directa ESP32 -->
+      <div id="panel-local" class="section-box hidden">
+        <div class="section-title"><span>Conexión Local al Nodo ESP32 (HTTP / Modbus 502)</span></div>
+        <div class="input-row">
+          <input type="text" id="espIpInput" value="http://192.168.4.1/api/telemetry" />
+          <button class="btn-action" onclick="pollOnce()">Conectar</button>
+        </div>
+      </div>
+
+      <!-- Panel Conexión al Servidor SCADA Node.js -->
+      <div id="panel-scada" class="section-box hidden">
+        <div class="section-title"><span>Servidor SCADA Central (Historiador + Telegram)</span></div>
+        <div class="input-row">
+          <input type="text" id="scadaUrlInput" value="http://localhost:3000/api/telemetry" />
+          <button class="btn-action" onclick="pollOnce()">Sincronizar</button>
+        </div>
+      </div>
+
+      <!-- SUPERVISIÓN DEL LAZO DE CORRIENTE 4-20 mA (CERO VIVO NAMUR NE43) -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>⚡ Lazo de Corriente 4–20 mA (Shunt 150 Ω | Transmisor 0–10 Bar)</span>
+          <span id="liveZeroBadge" class="live-zero-pill lz-ok">CERO VIVO OK (≥ 4 mA)</span>
+        </div>
+
+        <div class="loop-grid">
+          <div class="loop-stat">
+            <div class="loop-stat-label">CORRIENTE LAZO</div>
+            <div class="loop-stat-val" id="valLoopmA">12.00 mA</div>
+          </div>
+          <div class="loop-stat">
+            <div class="loop-stat-label">ESCALA LINEAL (4-20mA)</div>
+            <div class="loop-stat-val" id="valLoopPct">50.0 %</div>
+          </div>
+          <div class="loop-stat">
+            <div class="loop-stat-label">PRESIÓN DESCARGA</div>
+            <div class="loop-stat-val" id="valLoopBar">5.00 Bar</div>
+          </div>
+        </div>
+
+        <div class="loop-bar-bg">
+          <div class="loop-bar-fill" id="loopBarFill"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:#8a99a8;">
+          <span>0 mA (Cable Cortado) | 4 mA (0%)</span>
+          <span>12 mA (50%)</span>
+          <span>20 mA (100%)</span>
+        </div>
+      </div>
+
+      <!-- Mapa de Registros Modbus TCP (Puerto 502) y Modbus RTU (RS485) -->
+      <div class="section-box">
+        <div class="section-title">
+          <span>Mapa Holding Registers (Modbus TCP 502 & RS485 RTU)</span>
+          <span style="color:#00b8e6;">FC 0x03 / 0x06</span>
+        </div>
+        <table class="modbus-table">
+          <thead>
+            <tr>
+              <th>Registro</th>
+              <th>Variable Industrial</th>
+              <th>Raw (16-bit)</th>
+              <th>Valor Ingeniería</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="reg-badge">40001</span></td>
+              <td>Corriente Motor RMS</td>
+              <td class="reg-raw" id="reg40001">49</td>
+              <td id="eng40001">0.49 A</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40002</span></td>
+              <td>Vibración Acelerómetro</td>
+              <td class="reg-raw" id="reg40002">0</td>
+              <td id="eng40002">0.00 Gs</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40003-04</span></td>
+              <td>Horómetro Acumulado</td>
+              <td class="reg-raw" id="reg40003">0 : 48</td>
+              <td id="eng40003">0.48 hrs</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40005</span></td>
+              <td>Palabra de Estado / Alarma</td>
+              <td class="reg-raw" id="reg40005">1</td>
+              <td id="eng40005">1 = RUN OK</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40008</span></td>
+              <td>Corriente Lazo 4–20 mA</td>
+              <td class="reg-raw" id="reg40008">1200</td>
+              <td id="eng40008">12.00 mA</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40009</span></td>
+              <td>Escala Lazo 4–20 mA (%)</td>
+              <td class="reg-raw" id="reg40009">5000</td>
+              <td id="eng40009">50.0 % (5.00 Bar)</td>
+            </tr>
+            <tr>
+              <td><span class="reg-badge">40007</span></td>
+              <td>Comando Mantenimiento SCADA</td>
+              <td class="reg-raw" id="reg40007">0</td>
+              <td>
+                <button class="btn-action btn-warn" style="padding:3px 8px;font-size:0.7rem;" onclick="writeModbusResetHours()">
+                  FC06 Reset Hrs
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Registro de Eventos y Alarmas SCADA -->
+      <div class="section-box" style="margin-bottom:0;">
+        <div class="section-title">
+          <span>📋 Registro de Alarmas SCADA (NAMUR NE43 + Motor)</span>
+          <span style="cursor:pointer;color:#38bdf8;" onclick="clearAlarms()">Limpiar</span>
+        </div>
+        <div class="alarm-list" id="alarmList">
+          <div class="alarm-item alarm-info">
+            <span>[INIT]</span>
+            <span>Modbus TCP (502) + RS485 RTU + Lazo 4-20 mA (Cero Vivo activo)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const MAX_POINTS = 30;
+    const TOTAL_LIFE_HOURS = 99000.00;
+
+    let sourceMode = 'sim';
+    let simScenario = 'normal';
+    let currentMachineName = 'Bomba';
+    let currentUnitId = 1;
+    let hoursUsed = 0.48;
+    let lastStatusCode = 1;
+    let lastSnapshot = { current: 0.49, vibration: 0.00, loopmA: 12.00, loopPct: 50.0, loopBar: 5.00, statusCode: 1 };
+
+    let vibrationHistory = [
+      0.00, 0.30, 0.00, 0.35, 1.05, 0.05, 0.28, 0.18, 0.40, 0.02,
+      0.32, 0.48, 0.42, 1.47, 0.22, 0.36, 0.02, 0.40, 0.03, 1.24,
+      0.02, 0.22, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00
+    ];
+
+    function changeMachine(val) {
+      const [name, unit] = val.split('|');
+      currentMachineName = name;
+      currentUnitId = Number(unit);
+      document.getElementById('deviceName').textContent = name;
+      document.getElementById('unitIdLabel').textContent = `Unit ID: 0${currentUnitId}`;
+      logAlarm('INFO', `Cambio de supervisión a Activo: ${name} (Modbus Unit ID 0${currentUnitId})`);
+    }
+
+    function toggleTelegramPanel() {
+      document.getElementById('telegramModal').classList.toggle('hidden');
+    }
+
+    async function sendDirectTelegramAlert(msgText) {
+      const token = document.getElementById('tgBotToken').value.trim() || localStorage.getItem('tgBotToken') || '';
+      const chatId = document.getElementById('tgChatId').value.trim() || localStorage.getItem('tgChatId') || '';
+      if (!token || !chatId) return false;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: `🚨 *[SCADA MECATRÓNICA 4.0]*\nEquipo: *${currentMachineName} (Unit 0${currentUnitId})*\n${msgText}\n• Corriente Motor: ${lastSnapshot.current.toFixed(2)} A (Reg 40001)\n• Vibración: ${lastSnapshot.vibration.toFixed(2)} Gs (Reg 40002)\n• Lazo 4-20mA: ${lastSnapshot.loopmA.toFixed(2)} mA (Reg 40008)`,
+            parse_mode: 'Markdown'
+          })
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function saveAndTestTelegram() {
+      const token = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+      const msgEl = document.getElementById('tgStatusMsg');
+
+      if (!token || !chatId) {
+        msgEl.style.color = '#fbbf24';
+        msgEl.textContent = '⚠️ Ingresá tanto el Bot Token como tu Chat ID para enviar la prueba.';
+        return;
+      }
+
+      localStorage.setItem('tgBotToken', token);
+      localStorage.setItem('tgChatId', chatId);
+
+      const ok = await sendDirectTelegramAlert('✅ Prueba de enlace SCADA exitosa. Alertas industriales activadas.');
+      if (ok) {
+        msgEl.style.color = '#4ade80';
+        msgEl.textContent = '✅ ¡Mensaje enviado a tu Telegram! Probá ahora el botón de Sobrecarga o Cable Cortado.';
+        logAlarm('INFO', 'Notificación de prueba enviada a Telegram correctamente');
+      } else {
+        msgEl.style.color = '#f87171';
+        msgEl.textContent = '❌ No se pudo enviar. Verificá que el Token y Chat ID sean válidos.';
+      }
+    }
+
+    function exportMaintenanceCSV() {
+      const now = new Date().toISOString();
+      const rows = [
+        ['Fecha_ISO', 'Activo', 'Modbus_Unit_ID', 'Reg_40001_Corriente_A', 'Reg_40002_Vibracion_Gs', 'Reg_40003_Horas_Uso', 'Horas_Restantes', 'Reg_40008_Lazo_mA', 'Reg_40009_Lazo_Porcentaje', 'Presion_Bar', 'Reg_40005_Codigo_Estado'],
+        [
+          now,
+          currentMachineName,
+          currentUnitId,
+          lastSnapshot.current.toFixed(2),
+          lastSnapshot.vibration.toFixed(2),
+          hoursUsed.toFixed(2),
+          (TOTAL_LIFE_HOURS - hoursUsed).toFixed(2),
+          lastSnapshot.loopmA.toFixed(2),
+          lastSnapshot.loopPct.toFixed(1),
+          lastSnapshot.loopBar.toFixed(2),
+          lastSnapshot.statusCode
+        ]
+      ];
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n');
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(csvContent));
+      link.setAttribute('download', `Reporte_SCADA_${currentMachineName}_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      logAlarm('INFO', `Reporte de auditoría CSV exportado (${currentMachineName})`);
+    }
+
+    function setSourceMode(mode) {
+      sourceMode = mode;
+      document.getElementById('tab-sim').classList.toggle('active', mode === 'sim');
+      document.getElementById('tab-local').classList.toggle('active', mode === 'local');
+      document.getElementById('tab-scada').classList.toggle('active', mode === 'scada');
+
+      document.getElementById('panel-sim').classList.toggle('hidden', mode !== 'sim');
+      document.getElementById('panel-local').classList.toggle('hidden', mode !== 'local');
+      document.getElementById('panel-scada').classList.toggle('hidden', mode !== 'scada');
+
+      const badge = document.getElementById('connectionBadge');
+      if (mode === 'sim') badge.textContent = 'SIMULADOR PLANTA';
+      if (mode === 'local') badge.textContent = 'ESP32 DIRECTO (MODBUS)';
+      if (mode === 'scada') badge.textContent = 'SERVIDOR SCADA CENTRAL';
+    }
+
+    function setSimScenario(scenario) {
+      simScenario = scenario;
+      ['normal', 'cavitation', 'overload', 'wirebreak'].forEach(id => {
+        document.getElementById('preset-' + id).classList.toggle('selected', id === scenario);
+      });
+    }
+
+    function logAlarm(severity, text) {
+      const list = document.getElementById('alarmList');
+      const item = document.createElement('div');
+      const cls = severity === 'CRIT' ? 'alarm-crit' : (severity === 'WARN' ? 'alarm-warn' : 'alarm-info');
+      item.className = 'alarm-item ' + cls;
+      const now = new Date().toLocaleTimeString();
+      item.innerHTML = `<span>[${now}]</span><span>${text}</span>`;
+      list.prepend(item);
+    }
+
+    function clearAlarms() {
+      document.getElementById('alarmList').innerHTML = '';
+    }
+
+    async function writeModbusResetHours() {
+      hoursUsed = 0.00;
+      document.getElementById('reg40007').textContent = '1';
+      logAlarm('INFO', 'FC 0x06 Write Reg 40007 = 1 -> Horómetro reiniciado por mantenimiento');
+      setTimeout(() => { document.getElementById('reg40007').textContent = '0'; }, 800);
+      updateDashboard(0.49, 0.00, hoursUsed, 12.00);
+    }
+
+    async function pollOnce() {
+      const url = sourceMode === 'local'
+        ? document.getElementById('espIpInput').value.trim()
+        : document.getElementById('scadaUrlInput').value.trim();
+
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json();
+        if (Array.isArray(data.history)) vibrationHistory = data.history;
+        hoursUsed = data.hoursUsed ?? hoursUsed;
+        const loopmA = data.loopmA ?? 12.00;
+        updateDashboard(data.current, data.vibration, hoursUsed, loopmA, true);
+        document.getElementById('connectionBadge').textContent = 'EN LÍNEA ✓ (MODBUS/SCADA)';
+      } catch (err) {
+        document.getElementById('connectionBadge').textContent = 'SIN RESPUESTA REMOTA';
+      }
+    }
+
+    function generateSimulatedData() {
+      let current = 0.49;
+      let vibration = 0.00;
+      let loopmA = 12.00;
+
+      if (simScenario === 'normal') {
+        current = 0.48 + Math.random() * 0.03;
+        loopmA = 11.95 + Math.random() * 0.12;
+        const r = Math.random();
+        if (r > 0.76) vibration = 0.18 + Math.random() * 0.85;
+        else if (r > 0.52) vibration = 0.04 + Math.random() * 0.22;
+        else vibration = 0.00;
+      } else if (simScenario === 'cavitation') {
+        current = 0.68 + Math.random() * 0.14;
+        vibration = 1.62 + Math.random() * 0.75;
+        loopmA = 7.40 + Math.random() * 0.60;
+      } else if (simScenario === 'overload') {
+        current = 2.40 + Math.random() * 0.35;
+        vibration = 2.85 + Math.random() * 0.95;
+        loopmA = 19.60 + Math.random() * 0.35;
+      } else if (simScenario === 'wirebreak') {
+        current = 0.49;
+        vibration = 0.12;
+        loopmA = 0.00;
+      }
+
+      if (current > 0.10) {
+        hoursUsed += 1 / 3600;
+      }
+
+      updateDashboard(current, vibration, hoursUsed, loopmA, false);
+    }
+
+    function updateDashboard(current, vibration, hours, loopmA = 12.00, fromRemote = false) {
+      const remaining = Math.max(0, TOTAL_LIFE_HOURS - hours);
+
+      document.getElementById('valCurrent').textContent = `${current.toFixed(2)} A`;
+      document.getElementById('valVibration').textContent = `${vibration.toFixed(2)} Gs`;
+      document.getElementById('valHoursUsed').textContent = `${hours.toFixed(2)} hrs`;
+      document.getElementById('valHoursRem').innerHTML = `${remaining.toFixed(2)}<br>hrs`;
+
+      const lzBadge = document.getElementById('liveZeroBadge');
+      const barFill = document.getElementById('loopBarFill');
+      let loopPct = 0.0;
+      let loopBar = 0.0;
+      let wireBreak = false;
+
+      if (loopmA < 3.60) {
+        wireBreak = true;
+        lzBadge.className = 'live-zero-pill lz-fault';
+        lzBadge.textContent = '⚠️ FALLA CERO VIVO (< 4mA: CABLE CORTADO)';
+        barFill.style.width = '100%';
+        barFill.style.background = '#ef4444';
+      } else {
+        lzBadge.className = 'live-zero-pill lz-ok';
+        lzBadge.textContent = 'CERO VIVO OK (4–20 mA SANO)';
+        loopPct = Math.max(0, Math.min(100, ((loopmA - 4.0) / 16.0) * 100.0));
+        loopBar = (loopPct / 100.0) * 10.0;
+        barFill.style.width = `${loopPct}%`;
+        barFill.style.background = 'linear-gradient(90deg, #00b8e6, #22c55e)';
+      }
+
+      document.getElementById('valLoopmA').textContent = `${loopmA.toFixed(2)} mA`;
+      document.getElementById('valLoopPct').textContent = wireBreak ? 'ERR LAZO' : `${loopPct.toFixed(1)} %`;
+      document.getElementById('valLoopBar').textContent = wireBreak ? '--- Bar' : `${loopBar.toFixed(2)} Bar`;
+
+      const banner = document.getElementById('statusBanner');
+      banner.className = 'status-banner';
+
+      let statusCode = 1;
+      let statusDesc = '1 = RUN OK';
+
+      if (wireBreak) {
+        statusCode = 4;
+        statusDesc = '4 = LOOP BREAK (<4mA)';
+        banner.classList.add('status-danger');
+        banner.textContent = 'ESTADO: ¡FALLA LAZO 4-20mA (CABLE CORTADO)!';
+      } else if (current < 0.08) {
+        statusCode = 0;
+        statusDesc = '0 = STOP';
+        banner.classList.add('status-off');
+        banner.textContent = 'ESTADO: BOMBA DETENIDA';
+      } else if (current >= 1.80 || vibration >= 2.50) {
+        statusCode = 3;
+        statusDesc = '3 = TRIP / FAULT';
+        banner.classList.add('status-danger');
+        banner.textContent = 'ESTADO: ¡FALLA CRÍTICA / SOBRECARGA!';
+      } else if (vibration >= 1.50 || current >= 0.90) {
+        statusCode = 2;
+        statusDesc = '2 = WARNING';
+        banner.classList.add('status-warning');
+        banner.textContent = 'ESTADO: ALERTA DE VIBRACIÓN';
+      } else {
+        statusCode = 1;
+        statusDesc = '1 = RUN OK';
+        banner.classList.add('status-normal');
+        banner.textContent = 'ESTADO: OPERACIÓN NORMAL';
+      }
+
+      lastSnapshot = { current, vibration, loopmA, loopPct, loopBar, statusCode };
+
+      const r40001 = Math.round(current * 100);
+      const r40002 = Math.round(vibration * 100);
+      const r40003 = Math.floor(hours);
+      const r40004 = Math.round((hours - r40003) * 100);
+      const r40008 = Math.round(loopmA * 100);
+      const r40009 = Math.round(loopPct * 100);
+
+      document.getElementById('reg40001').textContent = r40001;
+      document.getElementById('eng40001').textContent = `${current.toFixed(2)} A`;
+      document.getElementById('reg40002').textContent = r40002;
+      document.getElementById('eng40002').textContent = `${vibration.toFixed(2)} Gs`;
+      document.getElementById('reg40003').textContent = `${r40003} : ${r40004}`;
+      document.getElementById('eng40003').textContent = `${hours.toFixed(2)} hrs`;
+      document.getElementById('reg40005').textContent = statusCode;
+      document.getElementById('eng40005').textContent = statusDesc;
+      document.getElementById('reg40008').textContent = r40008;
+      document.getElementById('eng40008').textContent = `${loopmA.toFixed(2)} mA`;
+      document.getElementById('reg40009').textContent = r40009;
+      document.getElementById('eng40009').textContent = wireBreak ? 'FALLA CERO VIVO' : `${loopPct.toFixed(1)}% (${loopBar.toFixed(2)} Bar)`;
+
+      if (statusCode !== lastStatusCode) {
+        if (statusCode === 4) {
+          const msg = `Reg 40008=${r40008} (0.00mA < 4mA): Alarma Cero Vivo — Cable cortado en lazo 4-20mA`;
+          logAlarm('CRIT', msg);
+          sendDirectTelegramAlert(msg);
+        } else if (statusCode === 3) {
+          const msg = `Reg 40005=3: Disparo por Falla Crítica / Rotor Trabado`;
+          logAlarm('CRIT', msg);
+          sendDirectTelegramAlert(msg);
+        } else if (statusCode === 2) {
+          logAlarm('WARN', `Reg 40005=2: Alerta de Vibración / Cavitación (${vibration.toFixed(2)}Gs)`);
+        } else if (statusCode === 1) {
+          logAlarm('INFO', `Reg 40005=1: Retorno a Operación Nominal (Lazo=${loopmA.toFixed(2)}mA)`);
+        }
+        lastStatusCode = statusCode;
+      }
+
+      if (!fromRemote) {
+        vibrationHistory.push(vibration);
+        if (vibrationHistory.length > MAX_POINTS) vibrationHistory.shift();
+      }
+
+      drawChart();
+    }
+
+    function drawChart() {
+      const canvas = document.getElementById('vibrationChart');
+      const ctx = canvas.getContext('2d');
+
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+
+      const padLeft = 48;
+      const padRight = 10;
+      const padTop = 12;
+      const padBottom = 14;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const peakInWindow = Math.max(...vibrationHistory, 1.47);
+      const maxG = Math.max(1.47, Math.ceil(peakInWindow * 100) / 100);
+
+      const steps = 3;
+      ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      for (let i = 0; i <= steps; i++) {
+        const ratio = i / steps;
+        const y = padTop + plotH - ratio * plotH;
+        const val = (ratio * maxG).toFixed(2) + ' G';
+
+        ctx.fillStyle = '#7e8c9b';
+        ctx.fillText(val, padLeft - 8, y);
+
+        ctx.strokeStyle = '#26323d';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+      }
+
+      if (vibrationHistory.length < 2) return;
+
+      const points = vibrationHistory.map((v, idx) => {
+        const x = padLeft + (idx / (MAX_POINTS - 1)) * plotW;
+        const clamped = Math.min(maxG, Math.max(0, v));
+        const y = padTop + plotH - (clamped / maxG) * plotH;
+        return { x, y };
+      });
+
+      const grad = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
+      grad.addColorStop(0, 'rgba(0, 184, 230, 0.35)');
+      grad.addColorStop(1, 'rgba(0, 184, 230, 0.0)');
+
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, padTop + plotH);
+      points.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(points[points.length - 1].x, padTop + plotH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.strokeStyle = '#00b8e6';
+      ctx.lineWidth = 2.4;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('tgBotToken').value = localStorage.getItem('tgBotToken') || '';
+      document.getElementById('tgChatId').value = localStorage.getItem('tgChatId') || '';
+      drawChart();
+    });
+
+    setInterval(() => {
+      if (sourceMode === 'sim') {
+        generateSimulatedData();
+      } else {
+        pollOnce();
+      }
+    }, 1000);
+
+    window.addEventListener('resize', drawChart);
+  </script>
+</body>
+</html>

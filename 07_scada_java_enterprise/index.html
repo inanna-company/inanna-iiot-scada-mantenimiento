@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/jpeg" href="../isotipo.jpg" />
+  <title>07 - Arquitectura Java SCADA Enterprise & Ignition | INANNA COMPANY</title>
+  <style>
+    :root {
+      --bg: #080c11;
+      --panel: #131b24;
+      --card: #18222d;
+      --border: #283848;
+      --cyan: #00b8e6;
+      --orange-java: #f89820;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .topbar { width: 100%; max-width: 980px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.82rem; }
+    .topbar a { color: var(--cyan); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .container { width: 100%; max-width: 980px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+    h1 { color: #f8fafc; font-size: 1.55rem; margin-bottom: 6px; }
+    .sub { color: #94a3b8; font-size: 0.88rem; margin-bottom: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .box h3 { color: var(--orange-java); font-size: 1rem; margin-bottom: 8px; }
+    .box p { color: #cbd5e1; font-size: 0.82rem; line-height: 1.45; }
+    pre { background: #0b1016; border: 1px solid #223140; border-radius: 10px; padding: 14px; overflow-x: auto; font-family: Consolas, monospace; font-size: 0.78rem; color: #38bdf8; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../catalogo_industrial.html"><img src="../logo horizontal.jpg" style="height:32px;border-radius:5px;" /> ⬅ Volver al Catálogo INANNA</a>
+    <span style="color:#f89820;font-weight:700;">☕ JAVA INDUSTRIAL SCADA + MODBUS TCP MASTER</span>
+  </div>
+
+  <div class="container">
+    <h1>☕ ¿Por qué Java es clave en tu Portafolio Industrial de INANNA COMPANY?</h1>
+    <p class="sub">
+      En la industria pesada, los sistemas SCADA corporativos (como <b>Ignition SCADA</b>), servidores <b>OPC-UA (Eclipse Milo)</b> y consolas de sala de control multiplataforma corren sobre la <b>Máquina Virtual de Java (JVM)</b>.
+    </p>
+
+    <div class="grid">
+      <div class="box">
+        <h3>1. Software Nativo de Sala de Control</h3>
+        <p>En esta carpeta ya tenés creado <b>InannaScadaDesktop.java</b>: una aplicación de escritorio completa en Java Swing/Java2D con tema oscuro INANNA, gráfico en vivo y cliente Maestro Modbus TCP (puerto 502) sin depender del navegador.</p>
+      </div>
+      <div class="box">
+        <h3>2. Integración con Ignition SCADA</h3>
+        <p>Ignition (el SCADA #1 del mundo, basado en Java) se conecta directo a la IP de tu ESP32 en el puerto 502 y mapea los registros <b>40001..40010</b> (incluyendo el Lazo 4–20 mA y Cero Vivo).</p>
+      </div>
+      <div class="box">
+        <h3>3. Apps Android Nativas & Backend Spring Boot</h3>
+        <p>El mismo cliente Modbus TCP en Java que te dejé en <b>InannaScadaDesktop.java</b> podés pegarlo directamente dentro de un proyecto de <b>Android Studio</b> o un microservicio <b>Spring Boot</b>.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:8px;font-size:0.9rem;color:#00b8e6;">📄 Vista Previa del Cliente Maestro Modbus TCP en Java (Incluido en InannaScadaDesktop.java):</h3>
+    <pre>
+// Trama MBAP + PDU Función 0x03 (Leer 10 Holding Registers desde 40001 en Puerto 502)
+Socket socket = new Socket();
+socket.connect(new InetSocketAddress("192.168.4.1", 502), 800);
+
+byte[] req = new byte[] {
+    0x00, 0x01, // Transaction ID
+    0x00, 0x00, // Protocol ID (0 = Modbus)
+    0x00, 0x06, // Length
+    0x01,       // Unit ID 1 (Esclavo ESP32 INANNA)
+    0x03,       // FC 0x03 Read Holding Registers
+    0x00, 0x00, // Start Address 0 (40001)
+    0x00, 0x0A  // Quantity: 10 Registros (40001..40010)
+};
+socket.getOutputStream().write(req);
+    </pre>
+  </div>
+</body>
+</html>

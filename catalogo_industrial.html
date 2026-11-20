@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INANNA COMPANY | Catálogo Comercial de Soluciones IIoT & SCADA</title>
+  <link rel="icon" type="image/jpeg" href="./isotipo.jpg" />
+  <style>
+    :root {
+      --bg: #070a0f;
+      --card: #121820;
+      --border: #233242;
+      --cyan: #00b8e6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: #fff; padding: 24px 16px 40px; display: flex; flex-direction: column; align-items: center; }
+    .header { max-width: 980px; width: 100%; text-align: center; margin-bottom: 26px; background: #0b1017; border: 1px solid #1e2d3d; border-radius: 18px; padding: 24px 18px; box-shadow: 0 14px 40px rgba(0,0,0,0.65); }
+    .brand-logo-horiz { max-width: 340px; width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px; }
+    .divisions-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+    .div-pill { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.8px; padding: 3px 10px; border-radius: 99px; background: rgba(24,144,255,0.12); color: #38bdf8; border: 1px solid rgba(56,189,248,0.35); }
+    h1 { font-size: 1.75rem; color: #f8fafc; margin-bottom: 8px; }
+    p.lead { color: #94a3b8; font-size: 0.9rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(295px, 1fr)); gap: 16px; max-width: 980px; width: 100%; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: 0.2s; }
+    .card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+    .folder-tag { font-family: monospace; font-size: 0.72rem; color: #38bdf8; background: #0d131a; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
+    .card h2 { font-size: 1.2rem; margin-bottom: 8px; color: #e2e8f0; }
+    .card p { font-size: 0.83rem; color: #94a3b8; line-height: 1.45; margin-bottom: 14px; }
+    .specs { font-size: 0.75rem; color: #cbd5e1; margin-bottom: 16px; list-style: none; }
+    .specs li { margin-bottom: 4px; }
+    .btn { display: block; text-align: center; background: var(--cyan); color: #081018; text-decoration: none; font-weight: 700; padding: 10px; border-radius: 8px; font-size: 0.84rem; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="./logo horizontal.jpg" alt="INANNA COMPANY" class="brand-logo-horiz" />
+    <div class="divisions-strip">
+      <span class="div-pill">⚙️ AUTOMATION INANNA</span>
+      <span class="div-pill">🏭 INDUSTRIES INANNA</span>
+      <span class="div-pill">🔧 SERVICE INANNA</span>
+      <span class="div-pill">🤖 ROBOTICS & AI INANNA</span>
+    </div>
+    <h1>Catálogo de Monitoreo Industrial IIoT & SCADA</h1>
+    <p class="lead">Innovación • Tecnología • Soluciones — Lazo 4–20 mA (Cero Vivo NAMUR NE43), ESP-NOW, Modbus TCP/RS485 y Alertas.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 / (Raíz)</span>
+        <h2>🖥️ Consola SCADA + HMI Doble Panel</h2>
+        <p>Vista combinada para sala de control: panel operador a la izquierda y tabla completa de registros Modbus 40001–40009 a la derecha.</p>
+      </div>
+      <a class="btn" href="./index.html">Abrir Consola SCADA Principal</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /app</span>
+        <h2>📱 App Móvil Nativa (4 Pestañas)</h2>
+        <p>Versión móvil con barra de navegación inferior, calibrador deslizante de lazo 4–20 mA, alarmas Telegram y descarga CSV.</p>
+      </div>
+      <a class="btn" href="./app/index.html">Abrir App Móvil (/app)</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /01_bombas_centrifugas</span>
+        <h2>💧 01. Bombas Centrífugas y Agua</h2>
+        <p>Detección temprana de cavitación, protección contra marcha en seco, desgaste de sellos mecánicos y presión de impulsión.</p>
+        <ul class="specs">
+          <li>• <b>Sensores:</b> SCT-013 + MPU6050 + Presión 4–20 mA</li>
+        </ul>
+      </div>
+      <a class="btn" href="./01_bombas_centrifugas/index.html">Abrir Monitor de Bombas</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /02_compresores_neumatica</span>
+        <h2>🌬️ 02. Compresores de Tornillo y Aire</h2>
+        <p>Supervisión de presión de línea neumática, detección de fugas en planta, temperatura de unidad compresora y horas de filtros.</p>
+        <ul class="specs">
+          <li>• <b>Sensores:</b> Presión 0–16 Bar (4–20 mA) + PT100 + CT</li>
+        </ul>
+      </div>
+      <a class="btn" href="./02_compresores_neumatica/index.html">Abrir Monitor de Compresores</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /03_motores_reductores_vfd</span>
+        <h2>⚙️ 03. Motores, Reductores y VFD</h2>
+        <p>Evaluación de severidad de vibración según norma ISO 10816 (mm/s RMS), desalineación de ejes y daño en cajas reductoras.</p>
+        <ul class="specs">
+          <li>• <b>Sensores:</b> Vibración RMS 4–20 mA + Temp. Rodamiento</li>
+        </ul>
+      </div>
+      <a class="btn" href="./03_motores_reductores_vfd/index.html">Abrir Monitor de Motores</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /04_silos_tanques_nivel</span>
+        <h2>🛢️ 04. Silos, Tanques y Nivel Continuo</h2>
+        <p>Telemetría de nivel en litros/toneladas mediante sensor hidrostático o radar 4–20 mA con alarma de rebalse y reserva baja.</p>
+        <ul class="specs">
+          <li>• <b>Sensores:</b> Nivel 4–20 mA + Cero Vivo anti-derrame</li>
+        </ul>
+      </div>
+      <a class="btn" href="./04_silos_tanques_nivel/index.html">Abrir Monitor de Silos y Tanques</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <span class="folder-tag">📁 /05_cadena_frio_calderas_hvac</span>
+        <h2>❄️ 05. Cadena de Frío, Cámaras y Calderas</h2>
+        <p>Monitoreo térmico con transmisor PT100 4–20 mA, apertura de puertas, presión de succión y auditoría bromatológica.</p>
+        <ul class="specs">
+          <li>• <b>Sensores:</b> PT100 4–20 mA (-30 a +50°C) + Magnético</li>
+        </ul>
+      </div>
+      <a class="btn" href="./05_cadena_frio_calderas_hvac/index.html">Abrir Monitor Cadena de Frío</a>
+    </div>
+
+    <div class="card" style="border-color:#22c55e;">
+      <div>
+        <span class="folder-tag" style="color:#4ade80;">📁 /06_red_espnow_industrial</span>
+        <h2>📡 06. Red Inalámbrica ESP-NOW (Sin Router)</h2>
+        <p>5 ESP32 Satélites en planta transmiten directo por MAC (sin Wi-Fi ni router, cifrado AES-128, &lt;3 ms) hacia 1 ESP32 Concentrador Modbus.</p>
+        <ul class="specs">
+          <li>• <b>Incluye:</b> Monitor de Topología + Firmware Satélite y Gateway</li>
+        </ul>
+      </div>
+      <a class="btn" style="background:#22c55e;" href="./06_red_espnow_industrial/index.html">Abrir Concentrador ESP-NOW</a>
+    </div>
+
+    <div class="card" style="border-color:#f89820;">
+      <div>
+        <span class="folder-tag" style="color:#f89820;">📁 /07_scada_java_enterprise</span>
+        <h2>☕ 07. SCADA Desktop en Java + Ignition</h2>
+        <p>Software de escritorio en Java puro (Swing/Java2D + Sockets Modbus TCP Puerto 502) para PCs de sala de control o Android Studio.</p>
+        <ul class="specs">
+          <li>• <b>Incluye:</b> InannaScadaDesktop.java + Lanzador .bat</li>
+        </ul>
+      </div>
+      <a class="btn" style="background:#f89820;color:#081018;" href="./07_scada_java_enterprise/index.html">Ver Módulo SCADA Java</a>
+    </div>
+  </div>
+</body>
+</html>
